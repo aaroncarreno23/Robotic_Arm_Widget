@@ -119,7 +119,7 @@ class MainScreen(Screen):
     def setArmPosition(self, position):
         print("Move arm here")
 
-    def homeArm(self):
+    def homeArm(self, arm=None):
         arm.home(self.homeDirection)
         
     def isBallOnTallTower(self):
