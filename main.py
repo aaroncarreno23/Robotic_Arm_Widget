@@ -33,6 +33,20 @@ from time import sleep
 from dpeaDPi.DPiComputer import *
 from dpeaDPi.DPiStepper import *
 
+dpiComputer = DPiComputer()
+dpiStepper = DPiStepper()
+dpiStepper.setBoardNumber(0)
+
+if dpiComputer.initialize():
+    print("Successfully communicating with DPiComputer")
+else:
+    print("Failed to communicate with DPiComputer.")
+
+if dpiStepper.initialize():
+    print("Successfully communicating with DPiStepper board")
+else:
+    print("Failed to communicate with DPiStepper board.")
+
 # ////////////////////////////////////////////////////////////////
 # //                     HARDWARE SETUP                         //
 # ////////////////////////////////////////////////////////////////
@@ -42,6 +56,64 @@ from dpeaDPi.DPiStepper import *
    Talon Motor Controller for Air Piston goes into SERVO 0
    Tall Tower Limit Sensor goes in IN 2
    Short Tower Limit Sensor goes in IN 1
+
+/////////////////////////////////////////////////////////////////
+from time import sleep
+from dpeaDPi.DPiComputer import *
+from dpeaDPi.DPiStepper import *
+
+dpiComputer = DPiComputer()
+dpiStepper = DPiStepper()
+dpiStepper.setBoardNumber(0)
+dpiComputer.initialize()
+dpiStepper.initialize()
+
+if dpiComputer.initialize():
+    print("Successfully communicating with DPiComputer")
+else:
+    print("Failed to communicate with DPiComputer.")
+
+if dpiStepper.initialize():
+    print("Successfully communicating with DPiStepper board")
+else:
+    print("Failed to communicate with DPiStepper board.")   
+/////////////////////////////////////////////////////////////////
+   
+dpiComputer.writeServo(1, 90)
+dpiComputer.writeServo(1, 0)
+dpiComputer.writeServo(1, 180)
+
+
+
+
+
+ //value1 is short tower 
+ // value2 is tall tower 
+ 
+value1 = dpiComputer.readDigitalIn(dpiComputer.IN_CONNECTOR__IN_1)
+print(str(value1))
+            
+value2 = dpiComputer.readDigitalIn(dpiComputer.IN_CONNECTOR__IN_2)
+print(str(value2))
+  
+print(str(value1)) 
+print(str(value2))
+   
+1 = nothing
+0 = something
+
+
+
+
+
+
+
+
+
+
+
+
+   
    """
 
 # ////////////////////////////////////////////////////////////////
@@ -93,7 +165,7 @@ sm = ScreenManager()
 	
 class MainScreen(Screen):
     armPosition = 0
-    lastClick = time.clock()
+    lastClick = time.perf_counter()
 
     def __init__(self, **kwargs):
         super(MainScreen, self).__init__(**kwargs)
@@ -101,7 +173,7 @@ class MainScreen(Screen):
 
     def debounce(self):
         processInput = False
-        currentTime = time.time()
+        currentTime = time.perf_counter()
         if ((currentTime - self.lastClick) > DEBOUNCE):
             processInput = True
         self.lastClick = currentTime
