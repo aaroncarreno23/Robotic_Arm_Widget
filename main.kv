@@ -23,11 +23,11 @@
             color: 0.917, 0.796, 0.380, 1
             text: "Start"
             center_x: root.width * 0.5
-            y: root.height * 0.55
+            y: root.height * 0.6
             background_color: 1, 0, 0, 0
             background_normal: ''
             size_hint: None,None
-            size: 300,100
+            size: 150,50
             on_press: root.auto()
             on_release: root.resetColors()
 
@@ -41,7 +41,7 @@
             background_color: 0, 0, 0, 0
             background_normal: ''
             size_hint: None,None
-            size: 300,100
+            size: 100,100
             on_press: root.toggleArm()
             on_release: root.resetColors()
 
@@ -54,9 +54,20 @@
             background_color: 0, 0, 0, 0
             background_normal: ''
             size_hint: None,None
-            size: 300,100
+            size: 100,100
             on_press: root.toggleMagnet()
             on_release: root.resetColors()
+
+        DPEAButton:
+            id:towerSensorButton
+            color: 1, 0, 0, 1
+            text: "Check Towers"
+            size_hint: None, None
+            size: 75, 75
+            center_x: root.width * 0.22
+            y: root.height * 0.5
+            on_press:root.ballOnTower()
+
 
 	##################
 	##### SLIDERS ####
@@ -71,7 +82,7 @@
             step: 1
             center_x: root.width * 0.6
             y: root.height * 0.15
-            size_hint_x: 7
+            size_hint_x: 6
             on_value: root.setArmPosition(self.value)
 
         ##################
@@ -91,8 +102,17 @@
         Label:
             id: armControlLabel
             text: 'Arm Position: ' + str(root.armPosition)
-            font_size: 40
+            font_size: 20
             center_x: root.width * 0.22
-            y: root.height * 0.15
+            y: root.height * 0.1
             color: 0.8, 0.8, 0.8, 1
+
+
+        Label:
+            id:towerSensor
+            color: 0.8, 0.8, 0.8, 1
+            text: "Ball on no Tower"
+            font_size: 20
+            center_x: root.width * 0.22
+            y: root.height * 0.6
 

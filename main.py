@@ -29,6 +29,7 @@ from kivy.config import Config
 from kivy.core.window import Window
 from pidev.kivy import DPEAButton
 from pidev.kivy import PauseScreen
+import time
 from time import sleep
 from dpeaDPi.DPiComputer import *
 from dpeaDPi.DPiStepper import *
@@ -52,8 +53,8 @@ else:
 # ////////////////////////////////////////////////////////////////
 """Stepper goes into MOTOR 0
    Limit Sensor for Stepper Motor goes into HOME 0
-   Talon Motor Controller for Magnet goes into SERVO 1
-   Talon Motor Controller for Air Piston goes into SERVO 0
+   Talon Motor Controller for Magnet goes into SERVO 0
+   Talon Motor Controller for Air Piston goes into SERVO 1
    Tall Tower Limit Sensor goes in IN 2
    Short Tower Limit Sensor goes in IN 1
 
@@ -98,19 +99,44 @@ print(str(value2))
   
 print(str(value1)) 
 print(str(value2))
+
+# Number of times to check the sensor values
+iterations = 20
+
+for i in range(iterations):
+    # Read sensor values
+    value1 = dpiComputer.readDigitalIn(dpiComputer.IN_CONNECTOR__IN_1)
+    value2 = dpiComputer.readDigitalIn(dpiComputer.IN_CONNECTOR__IN_2)
+
+    # Print the sensor states
+    print(f"Short Tower Sensor (Value1): {value1}, Tall Tower Sensor (Value2): {value2}")
+
+    # Add a delay to make the output readable
+    time.sleep(1)
+
    
 1 = nothing
 0 = something
 
 
 
+NEGATIVE FOR LOWER TO UPPER 
+POSITIVE TO UPPER TO LOWER 
+0.3333 revolutions between the towers 
 
+wait_to_finish_moving_flg = True
+dpiStepper.enableMotors(True)
+dpiStepper.setSpeedInRevolutionsPerSecond(0, 1)
+dpiStepper.moveToRelativePositionInRevolutions(0, 0.3333, wait_to_finish_moving_flg)
 
+dpiStepper.setSpeedInRevolutionsPerSecond(0, 1)
+dpiStepper.moveToRelativePositionInRevolutions(0, -0.3333, wait_to_finish_moving_flg)
 
+dpiComputer.writeServo(1, 90) for open 
+dpiComputer.writeServo(1, 0) for close 
 
-
-
-
+dpiComputer.writeServo(0, 0) for magnet on 
+dpiComputer.writeServo(0, 90) for magnet off 
 
 
    
@@ -170,6 +196,10 @@ class MainScreen(Screen):
     def __init__(self, **kwargs):
         super(MainScreen, self).__init__(**kwargs)
         self.initialize()
+        self.servo_magnet = 0
+        self.servo_air = 1
+        self.arm_up = False
+        self.magnet = False
 
     def debounce(self):
         processInput = False
@@ -180,20 +210,59 @@ class MainScreen(Screen):
         return processInput
 
     def toggleArm(self):
-        print("Process arm movement here")
+
+        if self.arm_up:
+            dpiComputer.writeServo(self.servo_air, 0)
+            self.ids.armControl.text = "Lower Arm"
+            self.arm_up = False
+            print("Raised Arm")
+
+        else:
+            dpiComputer.writeServo(self.servo_air, 90)
+            self.ids.armControl.text = "Raise Arm"
+            self.arm_up = True
+            print("Lowered Arm")
 
     def toggleMagnet(self):
-        print("Process magnet here")
+
+        if self.magnet:
+            dpiComputer.writeServo(0, 90)
+            self.ids.magnetControl.text = "Release Ball"
+            self.magnet = False
+            print("Magnet ON")
+        else:
+            dpiComputer.writeServo(0, 0)
+            self.ids.magnetControl.text = "Hold Ball"
+            self.magnet = True
+            print("Magent OFF")
         
     def auto(self):
         print("Run the arm automatically here")
 
-    def setArmPosition(self, position):
+    def setArmPosition(self, slider, value):
         print("Move arm here")
 
     def homeArm(self, arm=None):
         arm.home(self.homeDirection)
-        
+
+    def ballOnTower(self):
+
+        nothing = 1
+        something = 0
+
+        value1 = dpiComputer.readDigitalIn(dpiComputer.IN_CONNECTOR__IN_1)
+        value2 = dpiComputer.readDigitalIn(dpiComputer.IN_CONNECTOR__IN_2)
+        print(f"Short Tower Sensor (Value1): {value1}, Tall Tower Sensor (Value2): {value2}")
+
+        if value1 == something:
+            self.ids.towerSensor.text ="Ball on Lower Tower"
+
+        elif value2 == something:
+            self.ids.towerSensor.text ="Ball on Upper Tower"
+
+        else:
+            self.ids.towerSensor.text ="Ball on no Tower"
+
     def isBallOnTallTower(self):
         print("Determine if ball is on the top tower")
 
