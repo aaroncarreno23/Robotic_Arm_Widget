@@ -214,13 +214,11 @@ class MainScreen(Screen):
 
         if self.enableMotor:
             dpiStepper.enableMotors(False)
-            self.ids.motor.text = "Motor off"
             self.enableMotor = False
             print("Motor Disabled")
 
         else:
             dpiStepper.enableMotors(True)
-            self.ids.motor.text = "Motor on"
             self.enableMotor = True
             print("Motor Enabled")
 
