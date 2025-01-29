@@ -28,14 +28,14 @@
             background_normal: ''
             size_hint: None,None
             size: 150,50
-            on_press: root.auto()
+            on_press: root.start_update()
             on_release: root.resetColors()
 
         # Turn on/off gate
         DPEAButton:
             id: armControl
             color: 0.180, 0.188, 0.980, 1
-            text: "Lower Arm"
+            text: "Raise Arm"
             center_x: root.width * 0.35
             y: root.height * 0.35
             background_color: 0, 0, 0, 0
@@ -64,9 +64,19 @@
             text: "Check Towers"
             size_hint: None, None
             size: 75, 75
-            center_x: root.width * 0.22
-            y: root.height * 0.5
+            center_x: root.width * 0.78
+            y: root.height * 0.6
             on_press:root.ballOnTower()
+
+        DPEAButton:
+            id:motor
+            color: 0, 0, 1, 1
+            text:"Motor off"
+            size_hint: None, None
+            size: 75, 75
+            center_x: root.width * 0.22
+            y: root.height * 0.6
+            on_press:root.toggleMotor()
 
 
 	##################
@@ -77,13 +87,13 @@
             id: moveArm
             orientation: 'horizontal'
             min: 0
-            max: 2
-            value: root.armPosition
-            step: 1
+            max: 1
+            value: 0
+            step: 0.05
             center_x: root.width * 0.6
             y: root.height * 0.15
             size_hint_x: 6
-            on_value: root.setArmPosition(self.value)
+            on_value: root.setArmPosition(self, self.value)
 
         ##################
 	##### LABELS #####
@@ -96,12 +106,12 @@
             bold: True
             center_x: root.width * 0.5
             halign: 'center'
-            y: root.height * 0.75
+            y: root.height * 0.8
             color: 0.9, 0.9, 0.9, 1
 
         Label:
             id: armControlLabel
-            text: 'Arm Position: ' + str(root.armPosition)
+            text: 'Arm Position: 0.00'
             font_size: 20
             center_x: root.width * 0.22
             y: root.height * 0.1
@@ -113,6 +123,6 @@
             color: 0.8, 0.8, 0.8, 1
             text: "Ball on no Tower"
             font_size: 20
-            center_x: root.width * 0.22
-            y: root.height * 0.6
+            center_x: root.width * 0.5
+            y: root.height * 0.7
 

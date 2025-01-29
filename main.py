@@ -132,8 +132,8 @@ dpiStepper.moveToRelativePositionInRevolutions(0, 0.3333, wait_to_finish_moving_
 dpiStepper.setSpeedInRevolutionsPerSecond(0, 1)
 dpiStepper.moveToRelativePositionInRevolutions(0, -0.3333, wait_to_finish_moving_flg)
 
-dpiComputer.writeServo(1, 90) for open 
-dpiComputer.writeServo(1, 0) for close 
+dpiComputer.writeServo(1, 90) for lower 
+dpiComputer.writeServo(1, 0) for raise 
 
 dpiComputer.writeServo(0, 0) for magnet on 
 dpiComputer.writeServo(0, 90) for magnet off 
@@ -200,6 +200,7 @@ class MainScreen(Screen):
         self.servo_air = 1
         self.arm_up = False
         self.magnet = False
+        self.enableMotor = False
 
     def debounce(self):
         processInput = False
@@ -208,6 +209,21 @@ class MainScreen(Screen):
             processInput = True
         self.lastClick = currentTime
         return processInput
+
+    def toggleMotor(self):
+
+        if self.enableMotor:
+            dpiStepper.enableMotors(False)
+            self.ids.motor.text = "Motor off"
+            self.enableMotor = False
+            print("Motor Disabled")
+
+        else:
+            dpiStepper.enableMotors(True)
+            self.ids.motor.text = "Motor on"
+            self.enableMotor = True
+            print("Motor Enabled")
+
 
     def toggleArm(self):
 
@@ -226,12 +242,12 @@ class MainScreen(Screen):
     def toggleMagnet(self):
 
         if self.magnet:
-            dpiComputer.writeServo(0, 90)
+            dpiComputer.writeServo(0, 0)
             self.ids.magnetControl.text = "Release Ball"
             self.magnet = False
             print("Magnet ON")
         else:
-            dpiComputer.writeServo(0, 0)
+            dpiComputer.writeServo(0, 90)
             self.ids.magnetControl.text = "Hold Ball"
             self.magnet = True
             print("Magent OFF")
@@ -240,10 +256,41 @@ class MainScreen(Screen):
         print("Run the arm automatically here")
 
     def setArmPosition(self, slider, value):
-        print("Move arm here")
+
+        stepper_num = 0
+        wait_to_finsh_moving_flg = True
+
+        motor_value = value * 0.3333
+
+
+        self.ids.armControlLabel.text = f"Arm Position: {value:.2f}"
+        dpiStepper.moveToAbsolutePositionInRevolutions(stepper_num, -motor_value, wait_to_finsh_moving_flg)
+        print(f"Arm Position: {value:.2f}")
+
 
     def homeArm(self, arm=None):
         arm.home(self.homeDirection)
+
+    def start_update(self):
+        Clock.schedule_interval(self.update_value, 1)
+
+    def update_value(self, dt):
+        nothing = 1
+        something = 0
+        value1 = dpiComputer.readDigitalIn(dpiComputer.IN_CONNECTOR__IN_1)
+        value2 = dpiComputer.readDigitalIn(dpiComputer.IN_CONNECTOR__IN_2)
+        print(f"Short Tower Sensor (Value1): {value1}, Tall Tower Sensor (Value2): {value2}")
+
+        if value1 == something:
+            self.ids.towerSensor.text = "Ball on Lower Tower"
+
+        elif value2 == something:
+            self.ids.towerSensor.text = "Ball on Upper Tower"
+
+        else:
+            self.ids.towerSensor.text = "Ball on no Tower"
+
+
 
     def ballOnTower(self):
 
@@ -268,7 +315,7 @@ class MainScreen(Screen):
 
     def isBallOnShortTower(self):
         print("Determine if ball is on the bottom tower")
-        
+
     def initialize(self):
         print("Home arm and turn off magnet")
 
