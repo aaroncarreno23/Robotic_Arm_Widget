@@ -29,6 +29,7 @@
             size_hint: None,None
             size: 150,50
             on_press: root.start_update()
+            on_press: root.toggleMotor
             on_release: root.resetColors()
 
         # Turn on/off gate
@@ -57,27 +58,6 @@
             size: 100,100
             on_press: root.toggleMagnet()
             on_release: root.resetColors()
-
-        DPEAButton:
-            id:towerSensorButton
-            color: 1, 0, 0, 1
-            text: "Check Towers"
-            size_hint: None, None
-            size: 75, 75
-            center_x: root.width * 0.78
-            y: root.height * 0.6
-            on_press:root.ballOnTower()
-
-        DPEAButton:
-            id:motor
-            color: 0, 0, 1, 1
-            text:"Motor off"
-            size_hint: None, None
-            size: 75, 75
-            center_x: root.width * 0.22
-            y: root.height * 0.6
-            on_press:root.toggleMotor()
-
 
 	##################
 	##### SLIDERS ####

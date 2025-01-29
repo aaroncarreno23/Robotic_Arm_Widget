@@ -256,13 +256,9 @@ class MainScreen(Screen):
         print("Run the arm automatically here")
 
     def setArmPosition(self, slider, value):
-
         stepper_num = 0
         wait_to_finsh_moving_flg = True
-
         motor_value = value * 0.3333
-
-
         self.ids.armControlLabel.text = f"Arm Position: {value:.2f}"
         dpiStepper.moveToAbsolutePositionInRevolutions(stepper_num, -motor_value, wait_to_finsh_moving_flg)
         print(f"Arm Position: {value:.2f}")
@@ -289,32 +285,6 @@ class MainScreen(Screen):
 
         else:
             self.ids.towerSensor.text = "Ball on no Tower"
-
-
-
-    def ballOnTower(self):
-
-        nothing = 1
-        something = 0
-
-        value1 = dpiComputer.readDigitalIn(dpiComputer.IN_CONNECTOR__IN_1)
-        value2 = dpiComputer.readDigitalIn(dpiComputer.IN_CONNECTOR__IN_2)
-        print(f"Short Tower Sensor (Value1): {value1}, Tall Tower Sensor (Value2): {value2}")
-
-        if value1 == something:
-            self.ids.towerSensor.text ="Ball on Lower Tower"
-
-        elif value2 == something:
-            self.ids.towerSensor.text ="Ball on Upper Tower"
-
-        else:
-            self.ids.towerSensor.text ="Ball on no Tower"
-
-    def isBallOnTallTower(self):
-        print("Determine if ball is on the top tower")
-
-    def isBallOnShortTower(self):
-        print("Determine if ball is on the bottom tower")
 
     def initialize(self):
         print("Home arm and turn off magnet")
